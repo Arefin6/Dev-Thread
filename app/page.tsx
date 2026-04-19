@@ -1,8 +1,6 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div>
+    <div className="text-2xl text-amber-200">
       <h2>Welcome to Dev Thread</h2>
     </div>
   );
