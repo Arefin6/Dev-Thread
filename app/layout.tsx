@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { inter } from "./fonts";
+import { inter } from "./fonts/fonts";
 import ThemeProvider from "@/context/Theme";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/navigation/navbar";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -37,7 +36,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
           {children}
         </ThemeProvider>
       </body>

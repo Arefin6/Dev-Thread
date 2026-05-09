@@ -1,4 +1,4 @@
-import { space_Grotesk } from "./fonts";
+import { space_Grotesk } from "../fonts/fonts";
 
 export default function Home() {
   return (
