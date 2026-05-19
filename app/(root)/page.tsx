@@ -1,12 +1,23 @@
-import { space_Grotesk } from "../fonts/fonts";
+import { Button } from "@base-ui/react";
+import { auth, signOut } from "../auth";
+import ROUTES from "@/constants/routes";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  console.log(session);
   return (
-    <div>
-      <h2>Welcome to Dev Thread</h2>
-      <h2 className={space_Grotesk.className}>
-        Welcome to Dev Thread Another Font
-      </h2>
+    <div className="px-10 pt-[100px]">
+      <h1 className={`text-3xl font-bold text-dark200_light800`}>
+        Welcome to the Home Page
+      </h1>
+      <form
+        action={async () => {
+          "use server";
+          await signOut({ redirectTo: ROUTES.SIGNIN });
+        }}
+      >
+        <Button type="submit">LogOut</Button>
+      </form>
     </div>
   );
 }

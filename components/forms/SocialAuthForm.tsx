@@ -1,13 +1,25 @@
 "use client";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
+import ROUTES from "@/constants/routes";
 
 const SocialAuthForm = () => {
   const buttonClass =
     "background-dark400_light900 body-medium text-dark200_light800 min-h-12 flex-1 rounded-2 px-4 py-3.5";
-  const handleSignIn = async (provider: string) => {};
+  const handleSignIn = async (provider: "github" | "google") => {
+    try {
+      await signIn(provider, { callbackUrl: ROUTES.HOME });
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occurred during sign in. Please try again.", {
+        position: "top-right",
+      });
+    }
+  };
   return (
-    <div className="mt-10 flex flex-wrap gap-2.5">
+    <div className="mt-10 flex flex-wrap gap-2.5 cursor-pointer">
       <Button className={buttonClass} onClick={() => handleSignIn("github")}>
         <Image
           src="/icons/github.svg"
