@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { inter } from "./fonts/fonts";
+import { inter, space_Grotesk } from "./fonts/fonts";
 import ThemeProvider from "@/context/Theme";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -22,14 +22,11 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn("font-sans", geist.variable)}
-    >
+    <html lang="en" suppressHydrationWarning>
       <SessionProvider session={session}>
         <body
-          className={`min-h-full flex flex-col $h-full antialiased ${inter.className}`}
+          suppressHydrationWarning
+          className={`${inter.className} ${space_Grotesk.variable} ${geist.variable} antialiased`}
         >
           <ThemeProvider
             attribute="class"
