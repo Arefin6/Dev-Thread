@@ -1,3 +1,4 @@
+import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
@@ -15,14 +16,13 @@ export default async function Home() {
       </section>
 
       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <h2>Local Search bar</h2>
-        {/* <LocalSearch
-          route={ROUTES.HOME}
-          imgSrc="/icons/search.svg"
-          placeholder="Search questions..."
-          iconPosition="left"
-          otherClasses="flex-1"
-        /> */}
+        <LocalSearch
+        // route={ROUTES.HOME}
+        // imgSrc="/icons/search.svg"
+        // placeholder="Search questions..."
+        // iconPosition="left"
+        // otherClasses="flex-1"
+        />
         <p>Fillters</p>
         {/* <CommonFilter
           filters={HomePageFilters}
