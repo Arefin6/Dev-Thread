@@ -17,11 +17,11 @@ export default async function Home() {
 
       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
-        // route={ROUTES.HOME}
-        // imgSrc="/icons/search.svg"
-        // placeholder="Search questions..."
-        // iconPosition="left"
-        // otherClasses="flex-1"
+          route={ROUTES.HOME}
+          imgSrc="/icons/search.svg"
+          placeholder="Search questions..."
+          iconPosition="left"
+          otherClasses="flex-1"
         />
         <p>Fillters</p>
         {/* <CommonFilter
