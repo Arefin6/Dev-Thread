@@ -1,3 +1,4 @@
+import HomeFilter from "@/components/fillters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
@@ -23,7 +24,7 @@ export default async function Home() {
           iconPosition="left"
           otherClasses="flex-1"
         />
-        <p>Fillters</p>
+
         {/* <CommonFilter
           filters={HomePageFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
@@ -31,7 +32,7 @@ export default async function Home() {
         /> */}
       </section>
 
-      {/* <HomeFilter /> */}
+      <HomeFilter />
 
       <div className="mt-10 flex w-full flex-col gap-6">
         <h2>Question 1</h2>
