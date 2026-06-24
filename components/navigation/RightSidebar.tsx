@@ -1,7 +1,7 @@
 import ROUTES from "@/constants/routes";
 import Image from "next/image";
 import Link from "next/link";
-import TagCard from "../TagCard";
+import TagCard from "../Cards/TagCard";
 
 const RightSidebar = () => {
   const hotQuestions = [
