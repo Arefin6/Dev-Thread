@@ -13,15 +13,22 @@ import {
 import { Input } from "../ui/input";
 import TagCard from "../Cards/TagCard";
 import { Button } from "../ui/button";
-import { useTransition } from "react";
+import { useRef, useTransition } from "react";
 import { RefreshCcw } from "lucide-react";
+import dynamic from "next/dynamic";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 interface Params {
   question?: Question;
   isEdit?: boolean;
 }
 
+const Editor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+});
+
 const QuestionForm = ({ question, isEdit = false }: Params) => {
+  const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
@@ -74,7 +81,11 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
                 Detailed explanation of your problem{" "}
                 <span className="text-primary-500">*</span>
               </FieldLabel>
-              Editor
+              <Editor
+                value={field.value}
+                fieldChange={field.onChange}
+                editorRef={editorRef}
+              />
               <FieldDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you&apos;ve put in the
                 title.
