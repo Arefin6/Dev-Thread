@@ -1,4 +1,4 @@
-import { auth, signOut } from "@/app/auth";
+import { auth, signOut } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,

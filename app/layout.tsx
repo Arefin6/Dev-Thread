@@ -6,7 +6,7 @@ import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
-import { auth } from "./auth";
+import { auth } from "@/auth";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 

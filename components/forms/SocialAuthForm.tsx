@@ -10,12 +10,21 @@ const SocialAuthForm = () => {
     "background-dark400_light900 body-medium text-dark200_light800 min-h-12 flex-1 rounded-2 px-4 py-3.5";
   const handleSignIn = async (provider: "github" | "google") => {
     try {
-      await signIn(provider, { callbackUrl: ROUTES.HOME });
+      await signIn(provider, {
+        callbackUrl: ROUTES.HOME,
+        redirect: false,
+      });
     } catch (error) {
       console.log(error);
-      toast.error("An error occurred during sign in. Please try again.", {
-        position: "top-right",
-      });
+
+      // toast({
+      //   title: "Sign-in Failed",
+      //   description:
+      //     error instanceof Error
+      //       ? error.message
+      //       : "An error occured during sign-in",
+      //   variant: "destructive",
+      // });
     }
   };
   return (
