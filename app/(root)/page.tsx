@@ -3,9 +3,21 @@ import HomeFilter from "@/components/fillters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { api } from "@/lib/api";
+import handleError from "@/lib/handlers/error";
 import Link from "next/link";
 
+const test = async () => {
+  try {
+    return await api.users.getAll();
+  } catch (err) {
+    return handleError(err);
+  }
+};
+
 export default async function Home() {
+  const users = await test();
+  console.log(users);
   const sampleQuestions: Question[] = [
     {
       _id: "q1",
