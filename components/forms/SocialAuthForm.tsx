@@ -12,19 +12,19 @@ const SocialAuthForm = () => {
     try {
       await signIn(provider, {
         callbackUrl: ROUTES.HOME,
-        redirect: false,
+        redirect: true,
       });
     } catch (error) {
       console.log(error);
 
-      // toast({
-      //   title: "Sign-in Failed",
-      //   description:
-      //     error instanceof Error
-      //       ? error.message
-      //       : "An error occured during sign-in",
-      //   variant: "destructive",
-      // });
+      toast({
+        title: "Sign-in Failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An error occured during sign-in",
+        variant: "destructive",
+      });
     }
   };
   return (

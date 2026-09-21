@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import QuestionCard from "@/components/Cards/QuestionCard";
 import HomeFilter from "@/components/fillters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
@@ -7,17 +8,11 @@ import { api } from "@/lib/api";
 import handleError from "@/lib/handlers/error";
 import Link from "next/link";
 
-const test = async () => {
-  try {
-    return await api.users.getAll();
-  } catch (err) {
-    return handleError(err);
-  }
-};
-
 export default async function Home() {
-  const users = await test();
-  console.log(users);
+  const session = await auth();
+
+  console.log("Session:", session);
+
   const sampleQuestions: Question[] = [
     {
       _id: "q1",

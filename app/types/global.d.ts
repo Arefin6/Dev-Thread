@@ -36,3 +36,14 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+
+interface SignInWithOAuthParams {
+  provider: "github" | "google";
+  providerAccountId: string;
+  user: {
+    name: string;
+    username: string;
+    email: string;
+    image: string;
+  };
+}
