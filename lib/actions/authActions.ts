@@ -12,6 +12,8 @@ import handleError from "../handlers/error";
 import { NotFoundError } from "../http-errors";
 import { SignInSchema, SignUpSchema } from "../validations";
 
+import { isRedirectError } from "next/dist/client/components/redirect-error"; // or "next/navigation"
+
 export async function signUpWithCredentials(
   params: AuthCredentials,
 ): Promise<ActionResponse> {
@@ -28,15 +30,13 @@ export async function signUpWithCredentials(
 
   try {
     const existingUser = await User.findOne({ email }).session(session);
-
     if (existingUser) {
-      throw new Error("User already exists");
+      throw new Error("User with this email already exists");
     }
 
     const existingUsername = await User.findOne({ username }).session(session);
-
     if (existingUsername) {
-      throw new Error("Username already exists");
+      throw new Error("Username is already taken");
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -59,16 +59,32 @@ export async function signUpWithCredentials(
     );
 
     await session.commitTransaction();
-
-    await signIn("credentials", { email, password, redirect: false });
-
-    return { success: true };
   } catch (error) {
     await session.abortTransaction();
-
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
+  }
+
+  // NextAuth Sign-In Step
+  try {
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (res?.error) {
+      return handleError(new Error(res.error)) as ErrorResponse;
+    }
+
+    return { success: true };
+  } catch (error) {
+    // ⚠️️ CRITICAL: Rethrow Next.js redirect errors so NextAuth can navigate
+    if (isRedirectError(error)) {
+      throw error;
+    }
+    return handleError(error) as ErrorResponse;
   }
 }
 

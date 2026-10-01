@@ -5,12 +5,11 @@ import { ValidationError } from "@/lib/http-errors";
 import { AccountSchema } from "@/lib/validations";
 import { NextResponse } from "next/server";
 
-// api/account/provider
+// api/accounts/provider
 export async function POST(request: Request) {
   try {
     await dbConnect();
     const { providerAccountId } = await request.json();
-
     const validatedData = AccountSchema.partial().safeParse({
       providerAccountId,
     });

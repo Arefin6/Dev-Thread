@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import Link from "next/link";
 import {
   Path,
@@ -6,6 +7,7 @@ import {
   FieldValues,
   useForm,
   Resolver,
+  SubmitHandler,
   DefaultValues,
 } from "react-hook-form";
 // 1. Swap old shadcn form imports for the new Base UI field primitives
@@ -20,25 +22,44 @@ import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Assuming these props match your current dynamic form setup
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>; // Replace 'any' with the actual schema type
   defaultValues: T;
-  handleSubmit: (data: T) => Promise<{ success: boolean; message?: string }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
 export default function AuthForm<T extends FieldValues>({
   schema,
   defaultValues,
-  handleSubmit,
+  onSubmit,
   formType,
 }: AuthFormProps<T>) {
   const form = useForm<T>({
     resolver: zodResolver(schema as any),
     defaultValues: defaultValues as DefaultValues<T>,
   });
+  const router = useRouter();
+  const handleSubmit: SubmitHandler<T> = async (data) => {
+    // console.log("fuck", data);
+    const result = (await onSubmit(data)) as ActionResponse;
+
+    if (result?.success) {
+      toast.success(
+        `Successfully ${formType === "SIGN_IN" ? "signed in" : "signed up"}!`,
+      );
+      router.push(ROUTES.HOME);
+    } else {
+      toast.error("An error occurred. Please try again.", {
+        description: result?.error?.message || "Unknown error",
+      });
+    }
+  };
+
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
   return (
     <form
@@ -64,7 +85,6 @@ export default function AuthForm<T extends FieldValues>({
 
             <FieldGroup>
               <Input
-                required
                 type={fieldName === "password" ? "password" : "text"}
                 className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 no-focus min-h-12 rounded-1.5 border"
                 // Directly attach react-hook-form's register configuration
@@ -79,6 +99,7 @@ export default function AuthForm<T extends FieldValues>({
       })}
 
       <Button
+        type="submit"
         disabled={form.formState.isSubmitting}
         className="primary-gradient paragraph-medium min-h-12 w-full rounded-2 px-4 py-3 font-inter !text-light-900"
       >
