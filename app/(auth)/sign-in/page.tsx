@@ -2,7 +2,7 @@
 "use client";
 
 import AuthForm from "@/components/forms/AuthForm";
-//import { signInWithCredentials } from "@/lib/actions/auth.action";
+import { signInWithCredentials } from "@/lib/actions/authActions";
 import { SignInSchema } from "@/lib/validations";
 
 const SignIn = () => {
@@ -11,10 +11,7 @@ const SignIn = () => {
       formType="SIGN_IN"
       schema={SignInSchema}
       defaultValues={{ email: "", password: "" }}
-      handleSubmit={async (data) => {
-        console.log("Form Data:", data);
-        return { success: true, message: "Logged in successfully" };
-      }}
+      onSubmit={signInWithCredentials}
     />
   );
 };

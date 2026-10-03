@@ -45,7 +45,6 @@ export default function AuthForm<T extends FieldValues>({
   });
   const router = useRouter();
   const handleSubmit: SubmitHandler<T> = async (data) => {
-    // console.log("fuck", data);
     const result = (await onSubmit(data)) as ActionResponse;
 
     if (result?.success) {

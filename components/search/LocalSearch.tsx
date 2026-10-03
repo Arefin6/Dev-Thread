@@ -1,9 +1,11 @@
 "use client";
+
 import Image from "next/image";
 import { Input } from "../ui/input";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
+
 interface Props {
   route: string;
   imgSrc: string;
@@ -19,25 +21,37 @@ const LocalSearch = ({
   iconPosition = "left",
   otherClasses,
 }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const query = searchParams.get("query") || "";
   const [searchQuery, setSearchQuery] = useState(query);
 
-  const pathname = usePathname();
-  const router = useRouter();
+  // Keep input state in sync if URL query parameter changes externally (e.g. back button)
+  useEffect(() => {
+    setSearchQuery(query);
+  }, [query]);
 
+  // Debounce input updates and sync to URL
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (searchQuery) {
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: "query",
-          value: searchQuery,
-        });
+      const currentQuery = searchParams.get("query") || "";
 
-        router.push(newUrl, { scroll: false });
+      if (searchQuery) {
+        // Only push if the search query actually changed
+        if (searchQuery !== currentQuery) {
+          const newUrl = formUrlQuery({
+            params: searchParams.toString(),
+            key: "query",
+            value: searchQuery,
+          });
+
+          router.push(newUrl, { scroll: false });
+        }
       } else {
-        if (pathname === route) {
+        // Remove 'query' key if input is cleared and query exists in URL
+        if (currentQuery && pathname === route) {
           const newUrl = removeKeysFromUrlQuery({
             params: searchParams.toString(),
             keysToRemove: ["query"],
@@ -46,10 +60,10 @@ const LocalSearch = ({
           router.push(newUrl, { scroll: false });
         }
       }
-    }, 300);
+    }, 500); // 500ms debounce gives a smoother typing experience
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, router, route, searchParams, pathname]);
+  }, [searchQuery, route, pathname, router]); // ❌ Omitted searchParams to break loop
 
   return (
     <div

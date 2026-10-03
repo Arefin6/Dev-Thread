@@ -9,9 +9,9 @@ import handleError from "@/lib/handlers/error";
 import Link from "next/link";
 
 export default async function Home() {
-  const session = await auth();
+  //const session = await auth();
 
-  console.log("Session:", session);
+  //console.log("Session:", session);
 
   const sampleQuestions: Question[] = [
     {
