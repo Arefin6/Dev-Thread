@@ -9,7 +9,7 @@ import { auth, signOut } from "@/auth";
 
 const LeftSidebar = async () => {
   const session = await auth();
-  const userId = session?.user?.email || undefined;
+  const userId = session?.user?.id || undefined;
 
   return (
     <section className="custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
@@ -22,7 +22,6 @@ const LeftSidebar = async () => {
           <form
             action={async () => {
               "use server";
-
               await signOut();
             }}
           >
