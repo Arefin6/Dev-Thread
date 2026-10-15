@@ -17,6 +17,10 @@ import { useRef, useTransition } from "react";
 import { RefreshCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import { MDXEditorMethods } from "@mdxeditor/editor";
+import { useRouter } from "next/navigation";
+import { createQuestion } from "@/lib/actions/questionAction";
+import { toast } from "sonner";
+import ROUTES from "@/constants/routes";
 
 interface Params {
   question?: Question;
@@ -28,6 +32,7 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 const QuestionForm = ({ question, isEdit = false }: Params) => {
+  const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
@@ -74,8 +79,19 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
       });
     }
   };
-  const handleCreateQuestion = (data: z.infer<typeof AskQuestionSchema>) => {
-    console.log("Form Data:", data);
+  const handleCreateQuestion = async (
+    data: z.infer<typeof AskQuestionSchema>,
+  ) => {
+    startTransition(async () => {
+      const result = await createQuestion(data);
+      if (result.success) {
+        toast.success("Question created successfully");
+
+        if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+      } else {
+        toast.error(result?.error?.message || "Failed to create question");
+      }
+    });
   };
 
   return (
