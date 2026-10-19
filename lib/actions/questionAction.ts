@@ -9,8 +9,8 @@ import {
 } from "../validations";
 import Question from "@/database/Question.model";
 import Tag, { ITagDoc } from "@/database/Tag.model";
+import User from "@/database/User.model";
 import TagQuestion from "@/database/TagQuestion.model";
-import { cache } from "react";
 
 export async function createQuestion(
   params: CreateQuestionParams,
@@ -189,7 +189,7 @@ export async function editQuestion(
   }
 }
 
-export const getQuestion = cache(async function getQuestion(
+export const getQuestion = async function getQuestion(
   params: GetQuestionParams,
 ): Promise<ActionResponse<Question>> {
   const validationResult = await action({
@@ -205,8 +205,18 @@ export const getQuestion = cache(async function getQuestion(
 
   try {
     const question = await Question.findById(questionId)
-      .populate("tags", "_id name")
-      .populate("author", "_id name image");
+      .populate({
+        path: "tags",
+        model: "Tag",
+        select: "_id name",
+      })
+      .populate({
+        path: "author",
+        model: "User",
+        select: "_id name image",
+      });
+
+    console.log("getQuestion question:", question);
 
     if (!question) throw new Error("Question not found");
 
@@ -214,4 +224,4 @@ export const getQuestion = cache(async function getQuestion(
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-});
+};

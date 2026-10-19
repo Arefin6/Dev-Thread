@@ -21,6 +21,6 @@ const UserSchema = new Schema<IUser>({
   portfolio: { type: String },
   reputation: { type: Number, default: 0 },
 });
-const User = models.User || model<IUser>("User", UserSchema);
+const User = models?.User || model<IUser>("User", UserSchema);
 
 export default User;

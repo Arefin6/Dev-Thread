@@ -18,7 +18,7 @@ import { RefreshCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { useRouter } from "next/navigation";
-import { createQuestion } from "@/lib/actions/questionAction";
+import { createQuestion, editQuestion } from "@/lib/actions/questionAction";
 import { toast } from "sonner";
 import ROUTES from "@/constants/routes";
 
@@ -38,9 +38,9 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -83,6 +83,20 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
     data: z.infer<typeof AskQuestionSchema>,
   ) => {
     startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question?._id,
+          ...data,
+        });
+        if (result.success) {
+          toast.success("Question updated successfully");
+
+          if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+        } else {
+          toast.error(result?.error?.message || "Failed to update question");
+        }
+        return;
+      }
       const result = await createQuestion(data);
       if (result.success) {
         toast.success("Question created successfully");
