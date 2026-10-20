@@ -42,7 +42,7 @@ const TagCard = ({
 
         {remove && (
           <Image
-            src="icons/close.svg"
+            src="/icons/close.svg"
             width={12}
             height={12}
             alt="close icon"
@@ -60,9 +60,9 @@ const TagCard = ({
 
   if (compact) {
     return isButton ? (
-      <button onClick={handleClick} className="flex justify-between gap-2">
+      <div onClick={handleClick} className="flex justify-between gap-2">
         {Content}
-      </button>
+      </div>
     ) : (
       <Link href={ROUTES.TAG(_id)} className="flex justify-between gap-2">
         {Content}

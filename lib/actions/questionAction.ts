@@ -207,12 +207,12 @@ export const getQuestion = async function getQuestion(
     const question = await Question.findById(questionId)
       .populate({
         path: "tags",
-        model: "Tag",
+        model: Tag,
         select: "_id name",
       })
       .populate({
         path: "author",
-        model: "User",
+        model: User,
         select: "_id name image",
       });
 
