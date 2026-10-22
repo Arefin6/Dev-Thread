@@ -6,6 +6,7 @@ import {
   AskQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
+  PaginatedSearchSchema,
 } from "../validations";
 import Question from "@/database/Question.model";
 import Tag, { ITagDoc } from "@/database/Tag.model";
@@ -225,3 +226,94 @@ export const getQuestion = async function getQuestion(
     return handleError(error) as ErrorResponse;
   }
 };
+export async function getQuestions(params: PaginatedSearchParams): Promise<
+  ActionResponse<{
+    questions: Question[];
+    isNext: boolean;
+  }>
+> {
+  const validationResult = await action({
+    params,
+    schema: PaginatedSearchSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { page = 1, pageSize = 10, query, filter } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filterQuery: Record<string, any> = {};
+  let sortCriteria = {};
+
+  try {
+    // if (filter === "recommended") {
+    //   const session = await auth();
+    //   const userId = session?.user?.id;
+
+    //   if (!userId) {
+    //     return { success: true, data: { questions: [], isNext: false } };
+    //   }
+
+    //   const recommended = await getRecommendedQuestions({
+    //     userId,
+    //     query,
+    //     skip,
+    //     limit,
+    //   });
+
+    //   return { success: true, data: recommended };
+    // }
+
+    // Search
+    if (query) {
+      filterQuery.$or = [
+        { title: { $regex: query, $options: "i" } },
+        { content: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    // Filters
+    switch (filter) {
+      case "newest":
+        sortCriteria = { createdAt: -1 };
+        break;
+      case "unanswered":
+        filterQuery.answers = 0;
+        sortCriteria = { createdAt: -1 };
+        break;
+      case "popular":
+        sortCriteria = { upvotes: -1 };
+        break;
+      default:
+        sortCriteria = { createdAt: -1 };
+        break;
+    }
+
+    const totalQuestions = await Question.countDocuments(filterQuery);
+
+    const questions = await Question.find(filterQuery)
+      .populate("tags", "name")
+      .populate("author", "name image")
+      .lean()
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit);
+
+    const isNext = totalQuestions > skip + questions.length;
+
+    return {
+      success: true,
+      data: {
+        questions: JSON.parse(JSON.stringify(questions)),
+        isNext,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
