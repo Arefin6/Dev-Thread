@@ -1,11 +1,20 @@
 import { auth } from "@/auth";
 import QuestionCard from "@/components/Cards/QuestionCard";
+import DataRenderer from "@/components/DataRenderer";
 import HomeFilter from "@/components/fillters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { EMPTY_QUESTION } from "@/constants/states";
 import { getQuestions } from "@/lib/actions/questionAction";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Dev Thread | Home",
+  description:
+    "Discover different programming questions and answers with recommendations from the community.",
+};
 
 export default async function Home({ searchParams }: RouteParams) {
   const { page, pageSize, query, filter } = await searchParams;
@@ -47,11 +56,19 @@ export default async function Home({ searchParams }: RouteParams) {
 
       <HomeFilter />
 
-      <div className="mt-10 flex w-full flex-col gap-6">
-        {questions?.map((question) => (
-          <QuestionCard key={question._id} question={question} />
-        ))}
-      </div>
+      <DataRenderer
+        success={success}
+        error={error}
+        data={questions}
+        empty={EMPTY_QUESTION}
+        render={(questions) => (
+          <div className="mt-10 flex w-full flex-col gap-6">
+            {questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))}
+          </div>
+        )}
+      />
 
       {/* <Pagination page={page} isNext={isNext || false} /> */}
     </>
